@@ -3,6 +3,34 @@ import path from "path";
 import prisma from "@/libs/prismadb";
 import { withFileUpload, getConfig } from "next-multiparty";
 
+let idNums;
+let imagePath = "";
+
+// Function to read the value of idNums from the file
+const readIdNums = () => {
+  try {
+    const idCounterPath = path.join(__dirname, "idCounter.txt");
+    const content = fs.readFileSync(idCounterPath, "utf-8");
+    return parseInt(content);
+  } catch (error) {
+    console.log("Error reading idCounter file:", error);
+    return 0; // Return 0 if the file doesn't exist or couldn't be read
+  }
+};
+
+// Function to write the updated value of idNums to the file
+const writeIdNums = (value) => {
+  try {
+    const idCounterPath = path.join(__dirname, "idCounter.txt");
+    fs.writeFileSync(idCounterPath, value.toString());
+  } catch (error) {
+    console.log("Error writing idCounter file:", error);
+  }
+};
+
+// Initialize idNums with the value from the file on server start
+idNums = readIdNums();
+
 export default withFileUpload(async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).end();
@@ -17,19 +45,20 @@ export default withFileUpload(async (req, res) => {
       // image id = imagepathname
       for (const imageUrl of imagefiles) {
         const imageName = path.basename(imageUrl.originalFilename);
-        const imagePath = path.join(
+        const fileExtension = imageName.substring(imageName.lastIndexOf("."));
+        const lastName = idNums + fileExtension;
+
+        imagePath = path.join(
           __dirname,
           "../../../../public",
           "images",
-          imageName
+          lastName
         );
 
         //Fotoları birden fazla olduğunda kayıt yaparken sıkıntı yaşamamak için kullanıyoruz
         const bufferFile = await imageUrl.toBuffer();
         fs.writeFileSync(imagePath, bufferFile);
 
-        
-        
         const carId = req.fields.carId;
         const sendingImage = await prisma.image.create({
           data: {
@@ -39,11 +68,14 @@ export default withFileUpload(async (req, res) => {
         });
 
         imageObjects.push(sendingImage);
+        idNums++;
+        
+        // Write the updated idNums value back to the file
+        writeIdNums(idNums);
       }
 
-      console.log(res);
       return res.status(200).json({
-        result: "Başarıyla kaydedildi. Foto var",
+        result: `Başarıyla kaydedildi. ${imagePath}`,
         images: imageObjects,
       });
     }

@@ -23,7 +23,9 @@ const Homepage = () => {
 
   const onSubmit = useCallback(
     async (carData) => {
-      const response = await axios.post("/api/cardataPost", carData);
+      const url = "http://127.0.0.1:5000/metin_post"
+
+       const response = await axios.post("/api/cardataPost", carData);
       setCarData(carData);
       setCarIDResponse(response.data.carId);
       setResult(response.data.result);

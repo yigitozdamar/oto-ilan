@@ -11,7 +11,7 @@ import useImageStoreData from "@/hooks/imageStore";
 const ImageUploader = ({ carId }) => {
   const [images, setImages] = useState([]);
   const router = useRouter();
-  const { imageData, setImageData} = useImageStoreData()
+  const { imageData, setImageData } = useImageStoreData();
   const onDrop = (acceptedFiles) => {
     // Limit the number of images to 10
     const newImages = acceptedFiles.slice(0, 10 - images.length);
@@ -78,31 +78,39 @@ const ImageUploader = ({ carId }) => {
   const submitImages = useCallback(
     async (cardId) => {
       try {
-       if (images.length > 0) {
-        const formData = new FormData();
-        formData.append("carId", carId);
-        images.forEach((image, index) => {
-          formData.append(`image${index}`, image);
-        });
+        if (images.length > 0) {
+          const formData = new FormData();
+          formData.append("carId", carId);
+          images.forEach((image, index) => {
+            formData.append(`image${index}`, image);
+          });
 
-        console.log(carId);
+          console.log(carId);
 
-        const response = await axios.post("/api/imagePost", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        const message =response.data.result
-        setImageData(message)
-        console.log("Images uploaded successfully");
-        toast.success("Kaydınız başarıyla oluşturulmuştur");
-        setTimeout(() => {
-          router.push("/NewPage");
-        }, 2000);
-        setImages([]);
-       } else {
-        toast.error("Lütfen bir fotoğraf seçiniz");
-       }
+          const response = await axios.post("/api/imagePost", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+          const message =response.data.result
+          setImageData(message)
+          console.log("Images uploaded successfully");
+          toast.success("Kaydınız başarıyla oluşturulmuştur");
+          setTimeout(() => {
+            router.push("/NewPage");
+          }, 2000);
+          setImages([]);
+
+          // DENEME API
+          // const response = await axios.get(
+          //   "https://api.covidtracking.com/v1/us/daily.json"
+          // );
+          // console.log(response.data[0].date);
+          // setImageData(response.data[0]);
+          // router.push("/NewPage");
+        } else {
+          toast.error("Lütfen bir fotoğraf seçiniz");
+        }
       } catch (error) {
         console.error("Error uploading images:", error);
       }
@@ -112,7 +120,6 @@ const ImageUploader = ({ carId }) => {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      
       <div
         {...getRootProps()}
         className={`dropzone w-1/3 mx-auto border-2 justify-center border-gray-300 border-dashed rounded-lg p-4 text-center ${
