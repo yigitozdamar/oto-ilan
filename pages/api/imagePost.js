@@ -3,7 +3,7 @@ import path from "path";
 import prisma from "@/libs/prismadb";
 import { withFileUpload, getConfig } from "next-multiparty";
 
-let idNums;
+let idNums = 0;
 let imagePath = "";
 
 // Function to read the value of idNums from the file
@@ -32,11 +32,11 @@ const writeIdNums = (value) => {
 idNums = readIdNums();
 
 export default withFileUpload(async (req, res) => {
+  idNums = readIdNums();
   if (req.method !== "POST") {
     return res.status(405).end();
   }
   try {
-    // Normalde req.body alırız ama burada withUpload kullandığımız için docs'ta req.files demiş.
     const imagefiles = req.files;
     if (imagefiles && imagefiles.length > 0) {
       // Fotoları kayıt için
@@ -68,8 +68,8 @@ export default withFileUpload(async (req, res) => {
         });
 
         imageObjects.push(sendingImage);
-        idNums++;
-        
+        idNums = idNums + 1;
+
         // Write the updated idNums value back to the file
         writeIdNums(idNums);
       }

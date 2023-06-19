@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -85,17 +85,28 @@ const ImageUploader = ({ carId }) => {
             formData.append(`image${index}`, image);
           });
 
-          console.log(carId);
-
           const response = await axios.post("/api/imagePost", formData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
           });
-          const message =response.data.result
-          setImageData(message)
+
+          //const message = response.data.result;
+          //setImageData(message);
+          
+          const secondApi = await axios.post("http://127.0.0.1:5000/foto_post");
+          
+          console.log(
+            "http://127.0.0.1:5000/foto_post:",
+            secondApi.data.Response
+          );
+
+          setImageData(secondApi.data.Response)
+          
           console.log("Images uploaded successfully");
+          
           toast.success("Kaydınız başarıyla oluşturulmuştur");
+          
           setTimeout(() => {
             router.push("/NewPage");
           }, 2000);
