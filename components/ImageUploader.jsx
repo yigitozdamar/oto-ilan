@@ -93,20 +93,26 @@ const ImageUploader = ({ carId }) => {
 
           //const message = response.data.result;
           //setImageData(message);
-          
-          const secondApi = await axios.post("http://127.0.0.1:5000/foto_post");
-          
-          console.log(
-            "http://127.0.0.1:5000/foto_post:",
-            secondApi.data.Response
+          const textme = "asdasd";
+          console.log("CARDID", cardId);
+          const secondApi = await axios.post(
+            "http://127.0.0.1:5000/metin_post",
+            {
+              carId,
+            }
           );
 
-          setImageData(secondApi.data.Response)
-          
+          // console.log(
+          //   "http://127.0.0.1:5000/foto_post:",
+          //   secondApi.data.Response
+          // );
+
+          setImageData(secondApi.data.Response);
+
           console.log("Images uploaded successfully");
-          
+
           toast.success("Kaydınız başarıyla oluşturulmuştur");
-          
+
           setTimeout(() => {
             router.push("/NewPage");
           }, 2000);
