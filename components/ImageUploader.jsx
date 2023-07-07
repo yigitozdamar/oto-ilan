@@ -95,8 +95,9 @@ const ImageUploader = ({ carId }) => {
           //setImageData(message);
           const textme = "asdasd";
           console.log("CARDID", cardId);
+          console.log("CARID:", carId);
           const secondApi = await axios.post(
-            "http://127.0.0.1:5000/metin_post",
+            "http://45.136.6.189:5000/metin_post",
             {
               carId,
             }
@@ -106,7 +107,7 @@ const ImageUploader = ({ carId }) => {
           //   "http://127.0.0.1:5000/foto_post:",
           //   secondApi.data.Response
           // );
-
+          console.log("IMAGEG RESPINSE API:::", response.data);
           setImageData(secondApi.data.Response);
 
           console.log("Images uploaded successfully");

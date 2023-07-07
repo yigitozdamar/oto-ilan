@@ -2,6 +2,8 @@ import fs from "fs";
 import path from "path";
 import prisma from "@/libs/prismadb";
 import { withFileUpload, getConfig } from "next-multiparty";
+import { cwd } from "node:process";
+const process = require("process");
 
 let idNums = 0;
 let imagePath = "";
@@ -9,7 +11,13 @@ let imagePath = "";
 // Function to read the value of idNums from the file
 const readIdNums = () => {
   try {
-    const idCounterPath = path.join(__dirname, "idCounter.txt");
+    const idCounterPath = path.join(
+      process.cwd(),
+      "pages",
+      "api",
+      "idCounter.txt"
+    );
+
     const content = fs.readFileSync(idCounterPath, "utf-8");
     return parseInt(content);
   } catch (error) {
@@ -21,7 +29,15 @@ const readIdNums = () => {
 // Function to write the updated value of idNums to the file
 const writeIdNums = (value) => {
   try {
-    const idCounterPath = path.join(__dirname, "idCounter.txt");
+    // const idCounterPath = path.join(__dirname, "idCounter.txt");
+    console.log(cwd(), "KLASOR");
+    const idCounterPath = path.join(
+      process.cwd(),
+      "pages",
+      "api",
+      "idCounter.txt"
+    );
+
     fs.writeFileSync(idCounterPath, value.toString());
   } catch (error) {
     console.log("Error writing idCounter file:", error);
